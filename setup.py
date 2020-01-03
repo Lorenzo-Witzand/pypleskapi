@@ -8,6 +8,7 @@ setup(name='python-pleskapi',
       url='https://github.com/sandromello/pypleskapi',
       license='GNU General Public License',
       packages=['pleskapi'],
+      install_requires=['six>=1.10.0,<1.11'],
       keywords='plesk api rpc',
       package_dir={'pleskapi': 'lib/pleskapi'},
       long_description=open('README.rst').read() + '\n\n' +

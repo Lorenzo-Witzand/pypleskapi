@@ -6,9 +6,12 @@ pleskapi.base
 This module contains the main built-ins for exercing the requests to the Plesk Panel endpoint.
 Note: For using OrderedDict in the requests, only with Python 2.7+ or install ordereddict from http://pypi.python.org.
 """
-import urllib2
 from converter import xml2elem, dict2xml, elem2xml, xml2dict, xml2json, odict
 from xml.etree.ElementTree import Element as xmlobj
+from six.moves.urllib_error import HTTPError
+from six.moves.urllib_request import Request, urlopen
+
+import six
 import warnings
 
 if dict is odict:
@@ -109,11 +112,11 @@ class BaseRequest(object):
         """Start the request to the Plesk Panel endpoint. Returns XML data.
         Return a :class:`BaseResponse <BaseResponse>`. """
         try:
-            response = urllib2.urlopen(urllib2.Request(self.endpoint_uri, self.packetxml, self.headers), timeout=self.timeout)
-            responsepacket = unicode(response.read().replace('\n', ''), 'utf-8')
+            response = urlopen(Request(self.endpoint_uri, self.packetxml, self.headers), timeout=self.timeout)
+            responsepacket = six.text_type(response.read().replace('\n', ''), 'utf-8')
             responsepacket = responsepacket.encode('utf-8')
             return BaseResponse(responsepacket)
-        except urllib2.HTTPError, e:
+        except HTTPError as e:
             if e.code == 500:
                 raise PleskApiError('Error requesting Plesk Api endpoint. Check server logs form more info.')
             raise
